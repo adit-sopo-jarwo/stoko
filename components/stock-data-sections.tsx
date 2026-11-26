@@ -5,14 +5,71 @@ import { useEffect, useRef, useState } from "react";
 const sections = [
     { id: "profile", title: "Profil Perusahaan" },
     { id: "financials", title: "Laporan Keuangan" },
-    { id: "dividends", title: "Dividen dan Stock Split" },
+    { id: "dividends", title: "Dividen dan Pemecahan Saham" },
     { id: "statistics", title: "Statistik Saham" },
-    { id: "insights", title: "Insights" },
-    { id: "options", title: "Options" },
+    { id: "insights", title: "Wawasan Saham" },
+    { id: "options", title: "Opsi Saham" },
     { id: "recommendations", title: "Rekomendasi Analis" },
 ] as const;
 
+const fieldLabels: Record<string, string> = {
+    assetProfile: "Profil Perusahaan",
+    price: "Harga",
+    quoteType: "Jenis Efek",
+    summaryDetail: "Ringkasan Perdagangan",
+    defaultKeyStatistics: "Statistik Utama",
+    financialData: "Data Keuangan",
+    calendarEvents: "Agenda Perusahaan",
+    majorHoldersBreakdown: "Komposisi Pemegang Saham",
+    institutionOwnership: "Kepemilikan Institusi",
+    companyOfficers: "Pimpinan Perusahaan",
+    longBusinessSummary: "Ringkasan Usaha",
+    website: "Situs Web",
+    industry: "Industri",
+    sector: "Sektor",
+    country: "Negara",
+    city: "Kota",
+    address1: "Alamat",
+    zip: "Kode Pos",
+    phone: "Telepon",
+    fullTimeEmployees: "Jumlah Karyawan",
+    currency: "Mata Uang",
+    marketCap: "Kapitalisasi Pasar",
+    totalRevenue: "Total Pendapatan",
+    grossProfits: "Laba Kotor",
+    grossMargins: "Margin Laba Kotor",
+    operatingMargins: "Margin Operasi",
+    profitMargins: "Margin Laba Bersih",
+    revenueGrowth: "Pertumbuhan Pendapatan",
+    earningsGrowth: "Pertumbuhan Laba",
+    totalCash: "Total Kas",
+    totalDebt: "Total Utang",
+    freeCashflow: "Arus Kas Bebas",
+    operatingCashflow: "Arus Kas Operasi",
+    returnOnAssets: "Imbal Hasil Aset",
+    returnOnEquity: "Imbal Hasil Ekuitas",
+    currentPrice: "Harga Saat Ini",
+    targetHighPrice: "Target Harga Tertinggi",
+    targetLowPrice: "Target Harga Terendah",
+    targetMeanPrice: "Rata-rata Target Harga",
+    recommendationKey: "Rekomendasi",
+    numberOfAnalystOpinions: "Jumlah Analis",
+    dividendYield: "Imbal Hasil Dividen",
+    dividendRate: "Dividen per Saham",
+    exDividendDate: "Tanggal Tanpa Hak Dividen",
+    payoutRatio: "Rasio Pembayaran Dividen",
+    trailingPE: "Rasio Harga/Laba Historis",
+    forwardPE: "Rasio Harga/Laba Proyeksi",
+    priceToBook: "Rasio Harga/Nilai Buku",
+    beta: "Beta",
+    volume: "Volume",
+    averageVolume: "Rata-rata Volume",
+    fiftyTwoWeekHigh: "Harga Tertinggi 52 Minggu",
+    fiftyTwoWeekLow: "Harga Terendah 52 Minggu",
+};
+
 function label(key: string) {
+    if (fieldLabels[key]) return fieldLabels[key];
     return key
         .replace(/([a-z])([A-Z])/g, "$1 $2")
         .replace(/[_-]/g, " ")
@@ -30,7 +87,7 @@ function DataView({ value, depth = 0 }: { value: unknown; depth?: number }) {
                 }).format(value)}
             </span>
         );
-    if (typeof value === "string") return <span className="break-words">{value}</span>;
+    if (typeof value === "string") return <span className="wrap-break-word">{value}</span>;
     if (depth >= 3) return <span className="text-gray-500">Data tambahan tersedia di API</span>;
 
     if (Array.isArray(value)) {

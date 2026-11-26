@@ -112,10 +112,10 @@ export function MarketDashboard() {
 
     return (
         <main className="bg-gray-50">
-            <div className="mx-auto grid w-full max-w-[1440px] gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,22%)] lg:px-4">
+            <div className="mx-auto grid w-full max-w-360 gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,22%)] lg:px-4">
                 <div className="min-w-0 space-y-8">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Market</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">Pasar Saham</h1>
                         <p className="mt-1 text-sm text-gray-600">
                             Indeks dan penyaring saham Indonesia.
                         </p>
@@ -137,7 +137,7 @@ export function MarketDashboard() {
                         id="screener"
                         className="scroll-mt-6 rounded-xl border border-gray-200 bg-white p-5"
                     >
-                        <h2 className="text-xl font-bold text-gray-900">Stock Screener</h2>
+                        <h2 className="text-xl font-bold text-gray-900">Penyaring Saham</h2>
                         <form onSubmit={submit} className="mt-4 flex flex-wrap items-end gap-3">
                             <label className="min-w-32 flex-1 text-xs font-semibold text-gray-600">
                                 Harga minimum
@@ -168,7 +168,7 @@ export function MarketDashboard() {
                         </form>
                         {screenerError ? (
                             <p className="py-8 text-sm text-gray-500">
-                                Data screener belum tersedia.
+                                Data penyaring saham belum tersedia.
                             </p>
                         ) : loading ? (
                             <p className="py-8 text-sm text-gray-500">Memuat saham...</p>

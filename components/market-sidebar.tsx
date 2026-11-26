@@ -27,22 +27,22 @@ const sections: {
 }[] = [
     {
         id: "trending",
-        title: "Trending",
+        title: "Sedang Populer",
         detail: "Diurutkan menurut aktivitas volume",
     },
     {
         id: "gainers",
-        title: "Top Gainers",
+        title: "Kenaikan Terbesar",
         detail: "Kenaikan harga terbesar",
     },
     {
         id: "losers",
-        title: "Top Losers",
+        title: "Penurunan Terbesar",
         detail: "Penurunan harga terbesar",
     },
     {
         id: "active",
-        title: "Most Active",
+        title: "Paling Aktif",
         detail: "Diurutkan menurut volume perdagangan",
     },
 ];
@@ -112,7 +112,7 @@ export function MarketSidebar() {
                     Sorotan Saham
                 </h2>
                 <p className="mt-1 text-xs text-gray-500">
-                    Dari daftar saham Indonesia di MoneyMen
+                    Dari daftar saham Indonesia di Stoko
                 </p>
                 {status === "error" && (
                     <button

@@ -88,7 +88,7 @@ export function StockList() {
 
     return (
         <main className="min-h-screen bg-gray-50">
-            <div className="mx-auto w-full max-w-[1440px] px-4 py-8 sm:px-6 lg:px-4">
+            <div className="mx-auto w-full max-w-360 px-4 py-8 sm:px-6 lg:px-4">
                 <h1 className="text-3xl font-bold text-gray-900">Daftar Saham Indonesia</h1>
                 <p className="mt-1 text-sm text-gray-600">
                     {IDX_LIST_SYMBOLS.length} saham pilihan dari Bursa Efek Indonesia. Pencarian
@@ -109,7 +109,7 @@ export function StockList() {
                         />
                     </label>
                     <h2 className="mt-6 text-lg font-semibold text-gray-900">
-                        {search.trim() ? "Hasil pencarian global" : "Saham pilihan Indonesia"}
+                        {search.trim() ? "Hasil pencarian semua pasar" : "Saham pilihan Indonesia"}
                     </h2>
                     <div className="mt-3">
                         {search.trim() ? (

@@ -103,7 +103,7 @@ export function MarketTicker() {
             aria-label="Harga saham Indonesia"
             className="border-b border-gray-200 bg-white text-gray-900"
         >
-            <div className="relative mx-auto flex w-full max-w-[1440px] items-center">
+            <div className="relative mx-auto flex w-full max-w-360 items-center">
                 <div
                     ref={scroller}
                     className="flex min-w-0 flex-1 snap-x snap-mandatory overflow-x-auto scroll-smooth scrollbar-none [&::-webkit-scrollbar]:hidden"

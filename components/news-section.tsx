@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { RiArrowRightUpLine, RiNewspaperLine, RiRefreshLine } from "@remixicon/react";
 import { MarketSidebar } from "@/components/market-sidebar";
 import { formatJakartaTime } from "@/lib/format-time";
@@ -139,7 +140,7 @@ export function NewsSection({ fullPage = false }: { fullPage?: boolean }) {
         const controller = new AbortController();
         const load = async () => {
             try {
-                const response = await fetch(`/api/news?limit=${fullPage ? 50 : 12}`, {
+                const response = await fetch(`/api/news?limit=${fullPage ? 50 : 4}`, {
                     signal: controller.signal,
                 });
                 if (!response.ok) throw new Error("News request failed");
@@ -163,52 +164,108 @@ export function NewsSection({ fullPage = false }: { fullPage?: boolean }) {
         return () => controller.abort();
     }, [retry, fullPage]);
 
+    if (!fullPage) {
+        return (
+            <section id="news" aria-labelledby="news-title" className="w-full bg-gray-50">
+                <div className="mx-auto grid w-full max-w-360 gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,22%)] lg:px-4">
+                    <div className="min-w-0">
+                        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                            <div>
+                                <h2
+                                    id="news-title"
+                                    className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"
+                                >
+                                    Berita Pasar
+                                </h2>
+                                <p className="mt-1 text-sm text-gray-600">
+                                    Kabar terbaru dari pasar saham dan ekonomi.
+                                </p>
+                            </div>
+                            <Link
+                                href="/news"
+                                className="inline-flex items-center gap-1 text-sm font-semibold text-gray-800 hover:underline"
+                            >
+                                Lihat semua berita
+                                <RiArrowRightUpLine aria-hidden="true" className="size-4" />
+                            </Link>
+                        </div>
+
+                        {status === "loading" && (
+                            <div className="grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,1fr)]">
+                                <div className="h-72 animate-pulse rounded-xl bg-gray-200" />
+                                <div className="h-72 animate-pulse rounded-xl bg-gray-200" />
+                            </div>
+                        )}
+                        {status === "error" && (
+                            <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600">
+                                <p>Berita belum bisa dimuat.</p>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setStatus("loading");
+                                        setRetry((value) => value + 1);
+                                    }}
+                                    className="mt-3 inline-flex items-center gap-2 font-semibold text-gray-900 hover:underline"
+                                >
+                                    <RiRefreshLine aria-hidden="true" className="size-4" />
+                                    Coba lagi
+                                </button>
+                            </div>
+                        )}
+                        {status === "ready" && news.length === 0 && (
+                            <p className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600">
+                                Belum ada berita terbaru.
+                            </p>
+                        )}
+                        {status === "ready" && news.length > 0 && (
+                            <div
+                                className={`grid gap-5 ${news.length > 1 ? "lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,1fr)]" : ""}`}
+                            >
+                                <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
+                                    <FeaturedNews item={news[0]} />
+                                </div>
+                                {news.length > 1 && (
+                                    <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
+                                        <div className="divide-y divide-gray-100">
+                                            {news.slice(1, 4).map((item) => (
+                                                <NewsRow
+                                                    key={item.uuid || item.link}
+                                                    item={item}
+                                                    compact
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <MarketSidebar />
+                </div>
+            </section>
+        );
+    }
+
     const latestNews = news
         .slice(4)
         .filter((item) => !fullPage || topics[topic].pattern.test(item.title));
 
     return (
         <section id="news" aria-labelledby="news-title" className="w-full bg-gray-50">
-            <div className="mx-auto grid w-full max-w-[1440px] gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,22%)] lg:gap-8 lg:px-4">
+            <div className="mx-auto grid w-full max-w-360 gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,22%)] lg:gap-8 lg:px-4">
                 <div
                     className={`min-w-0 ${fullPage ? "grid grid-cols-1 content-start items-start gap-y-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)] lg:gap-x-8" : ""}`}
                 >
-                    {fullPage && (
-                        <div className="lg:col-span-2">
-                            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                                Berita Pasar
-                            </h1>
-                            <p className="mt-1 text-sm text-gray-600">
-                                Berita pasar dan ekonomi Indonesia terbaru.
-                            </p>
-                            <div className="mt-5 flex flex-wrap gap-2" aria-label="Topik berita">
-                                {topics.map((item, index) => (
-                                    <button
-                                        key={item.label}
-                                        type="button"
-                                        aria-pressed={topic === index}
-                                        onClick={() => {
-                                            setTopic(index);
-                                            setVisibleCount(20);
-                                        }}
-                                        className={`rounded-full border px-3 py-1.5 text-sm font-medium ${topic === index ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-100"}`}
-                                    >
-                                        {item.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                     <section
                         id={fullPage ? "top-news" : "latest-news"}
                         aria-labelledby={fullPage ? "top-news-title" : "latest-news-title"}
-                        className={`scroll-mt-6 ${fullPage ? "order-2 border-t border-gray-200 pt-7 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0" : "mb-10"}`}
+                        className={`scroll-mt-6 ${fullPage ? "border-t border-gray-200 pt-7 lg:order-2 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0" : "mb-10"}`}
                     >
                         <h2
                             id={fullPage ? "top-news-title" : "latest-news-title"}
                             className="mb-4 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"
                         >
-                            {fullPage ? "Berita Utama" : "Latest News"}
+                            {fullPage ? "Berita Utama" : "Berita Terbaru"}
                         </h2>
                         {status === "loading" && (
                             <p className="text-sm text-gray-500">Memuat berita terbaru...</p>
@@ -236,27 +293,36 @@ export function NewsSection({ fullPage = false }: { fullPage?: boolean }) {
                                 </div>
                             ))}
                     </section>
-                    <div className={`min-w-0 ${fullPage ? "order-1" : ""}`}>
-                        <div
-                            id={fullPage ? "latest-news" : undefined}
-                            className="mb-6 flex scroll-mt-6 flex-wrap items-end justify-between gap-4"
-                        >
-                            <div>
-                                <h2
+                    <div id="latest-news" className="min-w-0 scroll-mt-6 lg:order-1">
+                        {fullPage && (
+                            <div className="mb-8">
+                                <h1
                                     id="news-title"
-                                    className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"
+                                    className="text-3xl font-bold tracking-tight text-gray-900"
                                 >
-                                    {fullPage ? "Berita Terbaru" : "Berita Pasar"}
-                                </h2>
+                                    Berita Terbaru
+                                </h1>
                                 <p className="mt-1 text-sm text-gray-600">
-                                    {fullPage && topic !== 0
-                                        ? `Topik ${topics[topic].label} · `
-                                        : ""}
-                                    Berita terkait pasar saham Indonesia.
+                                    Berita pasar dan ekonomi Indonesia terbaru.
                                 </p>
+                                <div className="mt-5 flex flex-wrap gap-2" aria-label="Topik berita">
+                                    {topics.map((item, index) => (
+                                        <button
+                                            key={item.label}
+                                            type="button"
+                                            aria-pressed={topic === index}
+                                            onClick={() => {
+                                                setTopic(index);
+                                                setVisibleCount(20);
+                                            }}
+                                            className={`rounded-full border px-3 py-1.5 text-sm font-medium ${topic === index ? "border-gray-900 bg-gray-900 text-white" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-100"}`}
+                                        >
+                                            {item.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-
+                        )}
                         {status === "loading" && (
                             <div className="divide-y divide-gray-200" aria-label="Memuat berita">
                                 {Array.from({ length: 6 }, (_, index) => (
