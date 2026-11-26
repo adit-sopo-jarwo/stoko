@@ -140,7 +140,7 @@ export function NewsSection({ fullPage = false }: { fullPage?: boolean }) {
         const controller = new AbortController();
         const load = async () => {
             try {
-                const response = await fetch(`/api/news?limit=${fullPage ? 50 : 4}`, {
+                const response = await fetch(`/api/news?limit=${fullPage ? 50 : 14}`, {
                     signal: controller.signal,
                 });
                 if (!response.ok) throw new Error("News request failed");
@@ -218,26 +218,45 @@ export function NewsSection({ fullPage = false }: { fullPage?: boolean }) {
                             </p>
                         )}
                         {status === "ready" && news.length > 0 && (
-                            <div
-                                className={`grid gap-5 ${news.length > 1 ? "lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,1fr)]" : ""}`}
-                            >
-                                <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
-                                    <FeaturedNews item={news[0]} />
-                                </div>
-                                {news.length > 1 && (
+                            <>
+                                <div
+                                    className={`grid gap-5 ${news.length > 1 ? "lg:grid-cols-[minmax(0,1.3fr)_minmax(280px,1fr)]" : ""}`}
+                                >
                                     <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
-                                        <div className="divide-y divide-gray-100">
-                                            {news.slice(1, 4).map((item) => (
-                                                <NewsRow
+                                        <FeaturedNews item={news[0]} />
+                                    </div>
+                                    {news.length > 1 && (
+                                        <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
+                                            <div className="divide-y divide-gray-100">
+                                                {news.slice(1, 6).map((item) => (
+                                                    <NewsRow
+                                                        key={item.uuid || item.link}
+                                                        item={item}
+                                                        compact
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                {news.length > 6 && (
+                                    <div className="mt-8">
+                                        <h3 className="mb-4 text-lg font-bold text-gray-900">
+                                            Berita lainnya
+                                        </h3>
+                                        <div className="grid gap-4 md:grid-cols-2">
+                                            {news.slice(6, 14).map((item) => (
+                                                <div
                                                     key={item.uuid || item.link}
-                                                    item={item}
-                                                    compact
-                                                />
+                                                    className="rounded-xl border border-gray-200 bg-white p-4"
+                                                >
+                                                    <NewsRow item={item} compact />
+                                                </div>
                                             ))}
                                         </div>
                                     </div>
                                 )}
-                            </div>
+                            </>
                         )}
                     </div>
                     <MarketSidebar />
