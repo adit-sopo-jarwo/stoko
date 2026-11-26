@@ -140,7 +140,7 @@ export function NewsSection({ fullPage = false }: { fullPage?: boolean }) {
         const controller = new AbortController();
         const load = async () => {
             try {
-                const response = await fetch(`/api/news?limit=${fullPage ? 50 : 14}`, {
+                const response = await fetch("/api/news?limit=50", {
                     signal: controller.signal,
                 });
                 if (!response.ok) throw new Error("News request failed");
@@ -245,7 +245,7 @@ export function NewsSection({ fullPage = false }: { fullPage?: boolean }) {
                                             Berita lainnya
                                         </h3>
                                         <div className="grid gap-4 md:grid-cols-2">
-                                            {news.slice(6, 14).map((item) => (
+                                            {news.slice(6).map((item) => (
                                                 <div
                                                     key={item.uuid || item.link}
                                                     className="rounded-xl border border-gray-200 bg-white p-4"
